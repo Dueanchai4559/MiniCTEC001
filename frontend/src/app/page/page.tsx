@@ -5,12 +5,14 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import useSessionHeartbeat from "@/app/hooks/useSessionHeartbeat";
 import { baseUrlAPI } from "@/app/ip";
 
 import Menu1Page from "@/app/page/Menu1/page";
 import Menu2Page from "@/app/page/Menu2/page";
+import Menu9Page from "@/app/page/Menu9/page";
 import Menu16Page from "@/app/page/Menu16/page";
+import Menu20Page from "@/app/page/Menu20/page";
+import SettingsPage from "@/app/page/settings/page"
 import axios from "axios";
 interface Notification {
     id: number;
@@ -64,7 +66,7 @@ export default function DashboardPage() {
         }
     };
 
-    useSessionHeartbeat();
+
     useEffect(() => {
         const raw = localStorage.getItem("authUser");
         if (!raw) {
@@ -107,19 +109,7 @@ export default function DashboardPage() {
         };
     }, []);
 
-    // โหลดแจ้งเตือน
-    useEffect(() => {
-        const fetchNotifications = async () => {
-            try {
-                const res = await axios.get(`${baseUrlAPI}/notifications`);
-                setNotifications(res.data || []);
-            } catch (err) {
-                console.error("โหลดแจ้งเตือนไม่ได้:", err);
-            }
-        };
 
-        if (showNotificationPopup) fetchNotifications();
-    }, [showNotificationPopup]);
 
     // ปิด popup เมื่อคลิกนอก
     useEffect(() => {
@@ -187,6 +177,9 @@ export default function DashboardPage() {
             case "menu1": return <Menu1Page />;
             case "menu2": return <Menu2Page />;
             case "menu16": return <Menu16Page />;
+            case "menu9": return <Menu9Page />;
+            case "menu10": return <Menu20Page />;
+            case "Settings": return <SettingsPage />;
             default: return <div>🔍 ไม่พบเมนูที่เลือก</div>;
         }
     };
@@ -218,9 +211,30 @@ export default function DashboardPage() {
                         <img src="/upload/dispensary.png" alt="หน้าจัดยาลอง" className="w-6 sm:w-8 md:w-10 max-w-[40px] h-auto"
                         />
                     </button>
+                    <button onClick={() => setActiveMenu("menu9")} title="11.หน้าข้อมูลยา">
+                        <img src="/upload/medicine.png" alt="หน้าข้อมูลยา" className="w-6 sm:w-8 md:w-10 max-w-[40px] h-auto"
+                        />
+                    </button>
+                    <button onClick={() => setActiveMenu("menu10")} title="12.หน้าตู้ยา">
+                        <img src="/upload/vending.png" alt="หน้าตู้ยา" className="w-6 sm:w-8 md:w-10 max-w-[40px] h-auto"
+                        />
+                    </button>
                 </div>
                 {/* ไอคอนด้านขวา */}
                 <div className="flex items-center space-x-4">
+                    <button onClick={() => setActiveMenu("Settings")} title="ตั้งค่า">
+                        <img src="/upload/settings.png" alt="ตั้งค่า" className="w-6 sm:w-8 md:w-10 max-w-[40px] h-auto"
+                        />
+                    </button>
+                    <button onClick={toggleLanguage} title="ภาษา">
+                        <img
+                            src={language === "th" ? "/upload/TH.png" : "/upload/EN.png"}
+                            alt="ภาษา"
+                            width={40}
+                            height={20}
+                            className="rounded-sm border border-gray-400"
+                        />
+                    </button>
                     <button onClick={handleLogout} title="ออกจากระบบ">
                         <img src="/upload/switch.png" alt="ออกจากระบบ" className="w-6 sm:w-8 md:w-10 max-w-[40px] h-auto"
                         />
@@ -334,7 +348,6 @@ export default function DashboardPage() {
                             )}
                         </ul>
 
-                        {/* ปุ่มไปหน้าทั้งหมด */}
                         {/* ปุ่มไปหน้าทั้งหมด */}
                         <div className="mt-3 text-right">
                             <button
